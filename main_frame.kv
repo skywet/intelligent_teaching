@@ -114,4 +114,28 @@ NavigationLayout:
                         theme_text_color: 'Primary'
                         text: "Tap the checkbox to start detection"
                         halign: 'center'
+            Screen:
+                name: 'select'
+                BoxLayout:
+                    orientation: 'vertical'
+                    padding: '3dp'
+                    MDLabel:
+                        font_style: 'Title'
+                        text: "Drag below to change the number of people selected"
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        MDSlider:
+                            id: num_slider
+                            min: 0
+                            max: 20
+                            value: 0
+                        MDLabel:
+                            text: str(int(num_slider.value))
+                    MDFlatButton:
+                        id: start_selection
+                        text: 'Tap here to generate name list '
+                        on_release: app.random_select()
+                    MDLabel
+                    
+
                     

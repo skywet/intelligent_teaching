@@ -20,6 +20,7 @@ from kivymd.theming import ThemeManager
 from kivymd.time_picker import MDTimePicker
 import os
 from multiprocessing import Process
+from rand_select import rand_sample
 
 def system_call(wd):
     os.system('cd {} && activate ML && python recognition.py'.format(wd))
@@ -41,6 +42,24 @@ class Client(App):
         p = Process(target=system_call,args=(os.getcwd(),))
         p.start()
         p.join()
+    def random_select(self):
+        num = int(self.root.ids.num_slider.value)
+        st = rand_sample(num)
+        content = MDLabel(font_style='Body1',
+                          theme_text_color='Secondary',
+                          text=st,
+                          size_hint_y=None,
+                          valign='top')
+        content.bind(texture_size=content.setter('size'))
+        self.dialog = MDDialog(title="Student selected:",
+                               content=content,
+                               size_hint=(.8, None),
+                               height=dp(200),
+                               auto_dismiss=False)
+
+        self.dialog.add_action_button("Dismiss",
+                                      action=lambda *x: self.dialog.dismiss())
+        self.dialog.open()
 
 if __name__     == '__main__':
     client = Client()
