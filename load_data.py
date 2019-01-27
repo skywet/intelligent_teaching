@@ -50,4 +50,4 @@ def load_data(loc):
     return x,y,len(os.listdir(loc))
 
 if __name__ == '__main__':
-    print(load_data('face-data'))
+    print(load_y('face-data'))

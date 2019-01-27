@@ -55,7 +55,7 @@ NavigationLayout:
         NavigationDrawerIconButton:
             icon: 'bank'
             text: 'Open Dashboard'
-            on_release: app.root.ids.scr_mngr.current = 'dash'
+            on_release: app.open_lead_list()
     BoxLayout:
         orientation: 'vertical'
         Toolbar:
@@ -71,26 +71,27 @@ NavigationLayout:
             Screen:
                 name: 'welcome'
                 ScrollView:
-                    do_scroll_x: False
-                    BoxLayout:
-                        orientation: 'vertical'
-                        MDLabel:
-                            font_style: 'Title'
-                            theme_text_color: 'Primary'
-                            text: "Welcome"
-                            halign: 'center'
-                        GridLayout:
-                            cols: 1
-                            row_default_height: self.width
-                            row_force_default: False
-                            size_hint_y: None
-                            height: self.minimum_height
-                            padding: dp(4), dp(4)
-                            spacing: dp(4)
-                            SmartTileWithLabel:
-                                mipmap: True
-                                source: './assets/asset1.jpg'
-                                text: "This is a teaching aid client."
+                    GridLayout:
+                        cols: 2
+                        row_default_height: (self.width - self.cols*self.spacing[0])/self.cols
+                        row_force_default: True
+                        size_hint_y: None
+                        height: self.minimum_height
+                        padding: dp(4), dp(4)
+                        spacing: dp(4)
+                        BoxLayout:
+                            orientation:'vertical'
+                            MDLabel:
+                                font_style: 'Display3'
+                                theme_text_color: 'Primary'
+                                text: "Welcome"
+                            MDLabel:
+                                font_style: 'Title'
+                                theme_text_color: 'Primary'
+                                text: 'This is an intelligent teaching aid'
+                        SmartTileWithLabel:
+                            mipmap: True
+                            source: './assets/welcome.png'
             Screen:
                 name:'regis'
                 BoxLayout:
@@ -136,6 +137,11 @@ NavigationLayout:
                         text: 'Tap here to generate name list '
                         on_release: app.random_select()
                     MDLabel
-                    
+            Screen:
+                id: dash_screen
+                name: 'dash'
+                ScrollView:
+                    id: sv_dash
+
 
                     
