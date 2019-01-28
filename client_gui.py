@@ -18,12 +18,14 @@ from kivymd.navigationdrawer import MDNavigationDrawer, NavigationDrawerHeaderBa
 from kivymd.selectioncontrols import MDCheckbox
 from kivymd.snackbar import Snackbar
 from kivymd.theming import ThemeManager
+from kivymd.grid import SmartTile
 from kivymd.time_picker import MDTimePicker
 from kivymd.list import OneLineListItem
 import os
 from multiprocessing import Process
 from rand_select import rand_sample,load_y
 import webbrowser
+from pre_data import data_process
 
 def system_call(wd):
     os.system('cd {} && activate ML && python recognition.py'.format(wd))
@@ -87,13 +89,24 @@ class Client(App):
             
 
     def open_lead_list(self,**kwargs):
-        self.root.ids.scr_mngr.current = 'dash'
-        ml = MDList()
-        self.root.ids.sv_dash.add_widget(ml)
-        y = load_y()
-        for people in y:
-            item = OneLineListItem(text=people,on_release=self.open_dash(people))
-            ml.add_widget(item)
+        try:
+            self.root.ids.ml.clear_widgets()
+        finally:
+            self.root.ids.scr_mngr.current = 'studentlist'
+            y = load_y()
+            for people in y:
+                item = OneLineListItem(text=people,on_release=self.open_dash(people))
+                self.root.ids.ml.add_widget(item)
+    
+    def open_img(self,**kwargs):
+        try:
+            self.root.ids.dash.clear_widgets()
+        finally:
+            self.root.ids.scr_mngr.current = 'dash'
+            data_process()
+            for file in os.listdir('presence/plot'):
+                item = SmartTile(mipmap=True,source='presence/plot/{}'.format(file))
+                self.root.ids.dash.add_widget(item)
 
 
 if __name__     == '__main__':

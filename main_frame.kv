@@ -53,8 +53,12 @@ NavigationLayout:
             text: 'Random Selection'
             on_release: app.root.ids.scr_mngr.current = 'select'
         NavigationDrawerIconButton:
-            icon: 'bank'
+            icon: 'movie'
             text: 'Open Dashboard'
+            on_release: app.open_img()
+        NavigationDrawerIconButton:
+            icon: 'bank'
+            text: 'Open Studentlist'
             on_release: app.open_lead_list()
     BoxLayout:
         orientation: 'vertical'
@@ -89,7 +93,7 @@ NavigationLayout:
                                 font_style: 'Title'
                                 theme_text_color: 'Primary'
                                 text: 'This is an intelligent teaching aid'
-                        SmartTileWithLabel:
+                        SmartTile:
                             mipmap: True
                             source: './assets/welcome.png'
             Screen:
@@ -139,9 +143,16 @@ NavigationLayout:
                     MDLabel
             Screen:
                 id: dash_screen
+                name: 'studentlist'
+                ScrollView:
+                    MDList:
+                        id: ml
+            Screen:
+                id: dash
                 name: 'dash'
                 ScrollView:
-                    id: sv_dash
+                    id: dash
+                        
 
 
                     
