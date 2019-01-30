@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from time import strptime
+import matplotlib.pyplot as plt
 
 
 def data_process():
@@ -19,6 +21,47 @@ def data_process():
             ax1.pie([present,absent],labels=labels,colors=['#ee0000','#66ccff'],explode=explode,shadow=True)
             plt.savefig('presence/plot/{}.jpg'.format(file[:-4]))
         
+def catergorize_file(lst):
+    newlst = []
+    histlst = []
+    for item in lst:
+        if item[-4:] == '.csv':
+            date = item[:8]
+            histlst.append(date)
+    histlst = list(set(histlst))
+    for item in lst:
+        sublst = []
+        for subitem in histlst:
+            if item[:8] == subitem and item[-4:] == '.csv':
+                sublst.append(item)
+        if sublst != []:
+            newlst.append(sublst)
+    return histlst,newlst
+
+def student_presence_process(ID):
+    dirs = os.listdir('presence/')
+    dir_date, dir_c = catergorize_file(dirs)
+    student_presence_df = pd.DataFrame(columns=['count'])
+    for filelst in dir_c:
+        count = 0
+        for file in filelst:
+            dct = pd.read_csv('presence/{}'.format(file)).to_dict().values()
+            if {0:ID} in dct:
+                count += 1
+        student_presence_df.loc[file[:8]] = count
+    plt.rcParams['font.sans-serif']=['SimHei']
+    plt.rcParams['axes.unicode_minus']=False
+    student_presence_df.plot(kind='bar')
+    student_presence_df.to_csv('presence/student_data/{}.csv'.format(ID))
+    plt.xlabel('日期')
+    plt.title('{}的出勤率-日期报告'.format(ID))
+    plt.savefig('presence/student_plot/{}.png'.format(ID))
+    plt.close('all')
+            
+def process_that():
+    peopleser = pd.read_excel('presence/id.xlsx').ID
+    for ID in peopleser:
+        student_presence_process(ID)
 
 if __name__ == '__main__':
-    data_process()
+    process_that()

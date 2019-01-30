@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from time import strftime
 import os
+from pre_data import data_process, process_that
 
 def draw_rec(img,a,b,c,d):
     '''
@@ -58,6 +59,8 @@ while True:
         cv2.imshow('Press "Q" to exit', img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
+data_process()
+process_that()
 print(presence_df)
 
 

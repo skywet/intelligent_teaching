@@ -25,7 +25,6 @@ import os
 from multiprocessing import Process
 from rand_select import rand_sample,load_y
 import webbrowser
-from pre_data import data_process
 
 def system_call(wd):
     os.system('cd {} && activate ML && python recognition.py'.format(wd))
@@ -56,6 +55,10 @@ class Client(App):
         p.start()
         p.join()
     
+    '''
+    def show_student_screen(self):
+    '''
+
     def random_select(self):
         '''
         弹出随机选择的人的ID
@@ -103,12 +106,10 @@ class Client(App):
             self.root.ids.dash.clear_widgets()
         finally:
             self.root.ids.scr_mngr.current = 'dash'
-            data_process()
             for file in os.listdir('presence/plot'):
                 item = SmartTile(mipmap=True,source='presence/plot/{}'.format(file))
                 self.root.ids.dash.add_widget(item)
 
-
-if __name__     == '__main__':
+if __name__ == '__main__':
     client = Client()
     client.run()
