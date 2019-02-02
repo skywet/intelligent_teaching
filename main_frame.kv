@@ -69,7 +69,7 @@ NavigationLayout:
             background_palette: 'Primary'
             background_hue: '500' 
             left_action_items: [['menu', lambda x: app.root.toggle_nav_drawer()]]
-            right_action_items: [['play', lambda x: app.show_snackbar()]]
+            right_action_items: [['play', lambda x: app.show_snackbar()],['arrow-left',lambda x:app.stop()]]
         ScreenManager:
             id: scr_mngr
             Screen:
@@ -152,7 +152,4 @@ NavigationLayout:
                 name: 'dash'
                 ScrollView:
                     id: dash
-                        
-
-
                     

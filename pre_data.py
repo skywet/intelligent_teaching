@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 
 
 def data_process():
+    '''
+    用于处理获得的出勤数据
+    '''
     dirs = os.listdir('presence/')
     people = len(pd.read_excel('presence/id.xlsx').ID)
     for file in dirs:
@@ -22,6 +25,9 @@ def data_process():
             plt.savefig('presence/plot/{}.jpg'.format(file[:-4]))
         
 def catergorize_file(lst):
+    '''
+    将得到的数据按日期分类
+    '''
     newlst = []
     histlst = []
     for item in lst:
@@ -39,6 +45,9 @@ def catergorize_file(lst):
     return histlst,newlst
 
 def student_presence_process(ID):
+    '''
+    生成csv/画图
+    '''
     dirs = os.listdir('presence/')
     dir_date, dir_c = catergorize_file(dirs)
     student_presence_df = pd.DataFrame(columns=['count'])
@@ -63,5 +72,18 @@ def process_that():
     for ID in peopleser:
         student_presence_process(ID)
 
+def process_whole_class():
+    peopleser = pd.read_excel('presence/id.xlsx').ID
+    dir_date, dir_c = catergorize_file(os.listdir('presence/'))
+    df = pd.DataFrame(columns=['freq'])
+    for filelst in dir_c:
+        count = 0
+        for file in filelst:
+            dct = pd.read_csv('presence/{}'.format(file))
+            count += dct.shape[0]
+        df.loc[file[:8]] = count
+    df.to_csv('presence/whole_class/whole-class.csv')
+
+
 if __name__ == '__main__':
-    process_that()
+    process_whole_class()
