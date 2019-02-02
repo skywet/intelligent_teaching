@@ -56,10 +56,6 @@ NavigationLayout:
             icon: 'movie'
             text: 'Open Dashboard'
             on_release: app.open_img()
-        NavigationDrawerIconButton:
-            icon: 'bank'
-            text: 'Open Studentlist'
-            on_release: app.open_lead_list()
     BoxLayout:
         orientation: 'vertical'
         Toolbar:
@@ -141,12 +137,7 @@ NavigationLayout:
                         text: 'Tap here to generate name list '
                         on_release: app.random_select()
                     MDLabel
-            Screen:
-                id: dash_screen
-                name: 'studentlist'
-                ScrollView:
-                    MDList:
-                        id: ml
+            
             Screen:
                 id: dash
                 name: 'dash'

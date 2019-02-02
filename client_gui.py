@@ -88,29 +88,6 @@ class Client(App):
         p.start()
         p.join()
     
-    def show_student_screen(self,ID):
-        student_screen = Screen(name='student_screen')
-        self.root.ids.scr_mngr.add_widget(student_screen)
-        student_screen.add_widget(SmartTileWithLabel(
-            mipmap=True,
-            source='presence/student_plot/{}.png'.format(ID),
-            text = 'Panel of Student {}'.format(ID),
-            ))
-        self.root.ids.scr_mngr.current = 'student_screen'
-        student_screen.add_widget(MDFloatingActionButton(
-            id = 'fltbut',
-            icon = 'arrow-left',
-            md_bg_color=get_color_from_hex(colors['Amber']['700']),
-            opposite_colors=True,
-            pos_hint={'center_x': 0.8, 'center_y': 0.2},
-            on_release = lambda x:self.clear_widget_for_screen(student_screen)
-        ))
-        
-
-    def clear_widget_for_screen(self,screen):
-        self.root.ids.scr_mngr.remove_widget(screen)
-        self.root.ids.scr_mngr.switch_to(self.root.ids.dashscreen)
-
     def random_select(self):
         '''
         弹出随机选择的人的ID
@@ -133,15 +110,6 @@ class Client(App):
                                       action=lambda *x: self.dialog.dismiss())
         self.dialog.open()
 
-    def open_lead_list(self,**kwargs):
-        try:
-            self.root.ids.ml.clear_widgets()
-        finally:
-            self.root.ids.scr_mngr.current = 'studentlist'
-            y = load_y()
-            for people in y:
-                item = OneLineListItem(text=people,on_release=lambda x:self.show_student_screen(int(people)))
-                self.root.ids.ml.add_widget(item)
     
     def open_img(self,**kwargs):
         try:
