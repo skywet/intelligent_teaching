@@ -69,6 +69,7 @@ NavigationLayout:
         ScreenManager:
             id: scr_mngr
             Screen:
+                on_enter: app.warning_label()
                 name: 'welcome'
                 ScrollView:
                     GridLayout:
@@ -89,6 +90,10 @@ NavigationLayout:
                                 font_style: 'Title'
                                 theme_text_color: 'Primary'
                                 text: 'This is an intelligent teaching aid'
+                            MDLabel:
+                                id: warning
+                                font_style: 'Title'
+                                theme_text_color: 'Primary'
                         SmartTile:
                             mipmap: True
                             source: './assets/welcome.png'

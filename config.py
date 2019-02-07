@@ -41,7 +41,7 @@ class ConfigPanel(App):
         open_folder = self.root.ids.switch._active
         freq = self.root.ids.text.text
         with open('config.ini','w') as cfg:
-            lines = ['open_folder={}'.format(open_folder),'freq={}'.format(freq)]
+            lines = ['open_folder={}\n'.format(open_folder),'freq={}'.format(freq)]
             cfg.writelines(lines)       
         return 1
 

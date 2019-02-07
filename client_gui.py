@@ -32,8 +32,7 @@ from rand_select import rand_sample,load_y
 import webbrowser
 import pandas as pd
 from time import strftime
-
-from infi.systray import SysTrayIcon
+from warning_module import warning
 
 def system_call(wd):
     os.system('cd {} && activate ML && python recognition.py'.format(wd))
@@ -79,6 +78,15 @@ class Client(App):
         '''
         Snackbar(text="This is a program designed for intelligent teaching!\nVersion 0.1\nMade by: Skymos, Jiao Shixuan").show()
 
+    def warning_label(self):
+        with open('config.ini') as cfg:
+            lines = cfg.readlines()
+            open_folder = bool(lines[0].split('=')[1])
+            tolerence = int(lines[1].split('=')[1])
+        warnlst = warning(tolerence)[1]
+        st = '\n'.join(warnlst)
+        self.root.ids.warning.text = "The following students will fail to get their score if they are late for another time\n"+st
+    
     def start_process(self):
         '''
         启动识别进程
@@ -125,11 +133,17 @@ def run():
     client.run()
 
 if __name__ == '__main__':
+    with open('config.ini') as cfg:
+        lines = cfg.readlines()
+        open_folder = eval(lines[0].split('=')[1])
+        tolerence = lines[1].split('=')[1]
     p1 = Process(target=run)
-    p2 = Process(target=open_folder_scheduled)
-    p2.daemon = True
-    p2.start()
-    print('Detecting process started')
+    if open_folder:
+        p2 = Process(target=open_folder_scheduled)
+        p2.daemon = True
+        p2.start()
+        print('Detecting process started')
     p1.start()
     p1.join()
-    p2.join()
+    if open_folder:
+        p2.join()
