@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import re
-from warning_module import warning
+from utils.warning_module import warning
 
 class WeightInvalidError(Exception):
     def __init__(self):

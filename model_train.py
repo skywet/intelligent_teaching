@@ -10,7 +10,7 @@ from keras.layers import Dense,Activation,Convolution2D,Dropout,MaxPooling2D,Fla
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard
 # 加载数据处理用库
-from load_data import load_data
+from utils.load_data import load_data
 import numpy as np
 import os
 from playsound import playsound

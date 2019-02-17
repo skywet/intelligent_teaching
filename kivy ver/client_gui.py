@@ -7,7 +7,6 @@ from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen
 from kivy.utils import get_color_from_hex
 from kivy.config import Config
-Config.set('graphics','fullscreen','fake')
 
 from kivymd.color_definitions import colors 
 from kivymd.bottomsheet import MDListBottomSheet, MDGridBottomSheet

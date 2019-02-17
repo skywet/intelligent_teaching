@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-from pre_data import process_whole_class
+from utils.pre_data import process_whole_class
 from grade_calculation import calc
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']

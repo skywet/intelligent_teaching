@@ -5,8 +5,8 @@ def rand_sample(num):
     '''
     提供GUI使用的取样函数
     '''
-    df = pd.read_excel('presence/id.xlsx')
-    ser = list(df.ID)
+    df = pd.read_excel('../presence/id.xlsx')
+    ser = list(df.name)
     samplst = random.sample(ser,num)
     samplst = map(str, samplst)
     return ' '.join(samplst)
@@ -15,7 +15,7 @@ def load_y():
     '''
     加载ID
     '''
-    df = pd.read_excel('presence/id.xlsx')
+    df = pd.read_excel('../presence/id.xlsx')
     ser = list(df.ID)
     ser = list(map(str,ser))
     return ser

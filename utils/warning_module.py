@@ -6,11 +6,11 @@ import glob
 
 def warning(tolerence = 3):
     df = pd.DataFrame(columns=['count','sumclass','score'])
-    filelst = os.listdir('./presence/student_data')
+    filelst = os.listdir('../presence/student_data')
     filelst = list(filter(lambda x : x[-3:] == 'csv',filelst))
-    sumclass = int(len(glob.glob('./presence/*.csv')))
+    sumclass = int(len(glob.glob('../presence/*.csv')))
     for file in filelst:
-        tempdf = pd.read_csv('./presence/student_data/{}'.format(file))
+        tempdf = pd.read_csv('../presence/student_data/{}'.format(file))
         stu_id = file[:-4]
         count = tempdf.iloc[:,-1].sum()
         if sumclass - int(count) >= tolerence:
