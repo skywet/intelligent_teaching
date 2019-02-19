@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
 import wx
+from wx.adv import TaskBarIcon as TaskBarIcon
 import webbrowser
 from utils.rand_select import rand_sample
 from utils.load_config import *
@@ -9,6 +10,68 @@ import webbrowser
 cartoon_size = (cartoon_width, cartoon_high) = (256, 256)
 opstatus, tolerence = load_config()
 
+class taskbar_icon(TaskBarIcon):
+    def __init__(self,frame):
+        TaskBarIcon.__init__(self)
+        self.frame = frame
+        self.SetIcon(wx.Icon('assets/icon.ico'),'Intelligent teaching assistant')
+
+    def CreatePopupMenu(self):
+        menu = wx.Menu()
+        if not hasattr(self, 'randid'):
+            self.randid = wx.NewIdRef()
+            self.dashid = wx.NewIdRef()
+            self.recid = wx.NewIdRef()
+            self.confid = wx.NewIdRef()
+            self.exid = wx.NewIdRef()
+
+            self.Bind(wx.EVT_MENU, self.randselect, id=self.randid)
+            self.Bind(wx.EVT_MENU, self.opendash, id=self.dashid)
+            self.Bind(wx.EVT_MENU, self.configscreen, id=self.confid)
+            self.Bind(wx.EVT_MENU, self.startrec, id=self.recid)
+            self.Bind(wx.EVT_MENU, self.ex, id=self.exid)
+            print('Bind success')
+        menu = wx.Menu()
+        rand = wx.MenuItem(menu, id=self.randid, text='随机选择学生')
+        dash = wx.MenuItem(menu, id=self.dashid, text='启动Dash')
+        rec = wx.MenuItem(menu,id=self.recid,text='启动探测')
+        cfg = wx.MenuItem(menu, id=self.confid, text='设置')
+        ex = wx.MenuItem(menu, id=self.exid, text='退出')
+        menu.Append(rand)
+        menu.Append(dash)
+        menu.Append(rec)
+        menu.Append(cfg)
+        menu.Append(ex)
+        return menu
+
+    def configscreen(self, evt):
+        scr = config_dialog(
+            self,
+            -1,
+            "Sample Dialog",
+            size=(350, 200),
+            style=wx.DEFAULT_DIALOG_STYLE,
+        )
+        print('Screen initiated')
+        scr.CenterOnScreen()
+        val = scr.ShowModal()
+        scr.Destroy()
+
+    def startrec(self,evt):
+        call('cmd & activate ML & python recognition.py',shell=True)
+
+    def randselect(self, evt):
+        width, height = wx.DisplaySize()
+        win = transient_popup(self, wx.SIMPLE_BORDER)
+        win.Position((width / 2, height / 2), (0, 28))
+        win.Popup()
+
+    def opendash(self, event):
+        webbrowser(r'http://127.0.0.1:8050/')
+
+    def ex(self, event):
+        wx.Exit()
+        
 
 class config_dialog(wx.Dialog):
     def __init__(self,
@@ -21,6 +84,7 @@ class config_dialog(wx.Dialog):
                  name='dialog'):
         wx.Dialog.__init__(self)
         self.SetExtraStyle(wx.DIALOG_EX_CONTEXTHELP)
+        self.SetIcon(wx.Icon('assets/icon.ico',wx.BITMAP_TYPE_ICO))
         self.Create(parent, id, title, pos, size, style, name)
         sizer = wx.BoxSizer(wx.VERTICAL)
         label = wx.StaticText(self, -1, "Config Screen")
@@ -120,7 +184,8 @@ class MyFrame(wx.Frame):
         self.bitmap = wx.Bitmap(img)
         r = wx.Region(self.bitmap)
         self.SetShape(r)
-
+        self.SetIcon(wx.Icon('assets/icon.ico',wx.BITMAP_TYPE_ICO))
+        self.taskBarIcon = taskbar_icon(self)
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftClickDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnLeftClickUp)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
@@ -131,7 +196,7 @@ class MyFrame(wx.Frame):
         self.CaptureMouse()
         pos = event.GetPosition()
         self.pt = wx.Point(pos.x, pos.y)
-        call(r'cmd & dir & activate ML & python recognition.py')
+        #call(r'cmd & dir & activate ML & python recognition.py')
 
     def OnLeftClickUp(self, event):
         self.ReleaseMouse()
@@ -145,21 +210,25 @@ class MyFrame(wx.Frame):
         if not hasattr(self, 'randid'):
             self.randid = wx.NewIdRef()
             self.dashid = wx.NewIdRef()
+            self.recid = wx.NewIdRef()
             self.confid = wx.NewIdRef()
             self.exid = wx.NewIdRef()
 
             self.Bind(wx.EVT_MENU, self.randselect, id=self.randid)
             self.Bind(wx.EVT_MENU, self.opendash, id=self.dashid)
             self.Bind(wx.EVT_MENU, self.configscreen, id=self.confid)
+            self.Bind(wx.EVT_MENU, self.startrec, id=self.recid)
             self.Bind(wx.EVT_MENU, self.ex, id=self.exid)
             print('Bind success')
         menu = wx.Menu()
         rand = wx.MenuItem(menu, id=self.randid, text='随机选择学生')
         dash = wx.MenuItem(menu, id=self.dashid, text='启动Dash')
+        rec = wx.MenuItem(menu,id=self.recid,text='启动探测')
         cfg = wx.MenuItem(menu, id=self.confid, text='设置')
         ex = wx.MenuItem(menu, id=self.exid, text='退出')
         menu.Append(rand)
         menu.Append(dash)
+        menu.Append(rec)
         menu.Append(cfg)
         menu.Append(ex)
         self.PopupMenu(menu)
@@ -178,6 +247,9 @@ class MyFrame(wx.Frame):
         val = scr.ShowModal()
         scr.Destroy()
 
+    def startrec(self,evt):
+        call('cmd & activate ML & python recognition.py',shell=True)
+
     def randselect(self, evt):
         width, height = wx.DisplaySize()
         win = transient_popup(self, wx.SIMPLE_BORDER)
@@ -188,7 +260,7 @@ class MyFrame(wx.Frame):
         webbrowser(r'http://127.0.0.1:8050/')
 
     def ex(self, event):
-        self.Destroy()
+        wx.Exit()
 
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
