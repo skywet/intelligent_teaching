@@ -6,9 +6,39 @@ from utils.rand_select import rand_sample
 from utils.load_config import *
 from subprocess import call
 import webbrowser
+from openfolder import open_folder_scheduled
+from utils.warning_module import warning
 
 cartoon_size = (cartoon_width, cartoon_high) = (256, 256)
 opstatus, tolerence = load_config()
+warninglist = warning(tolerence)[1]
+warningname = False if len(warninglist) == 0 else ' '.join(warninglist)
+
+class info_screen(wx.Dialog):
+    def __init__(
+            self,parent,id,title,size=wx.DefaultSize,pos=wx.DefaultPosition,
+            style=wx.DEFAULT_DIALOG_STYLE, name='dialog'
+            ):
+        wx.Dialog.__init__(self)
+        self.Create(parent,id,title,pos,size,style,name)
+        if warningname:
+            s = '本程序警告以下同学，再迟到一次平时分即清零\n'+warningname
+        else:
+            s = '暂无警告情况'
+        box = wx.BoxSizer(wx.HORIZONTAL)
+        text = wx.StaticText(self,-1,s)
+        box.Add(text,0,wx.ALIGN_CENTER|wx.ALL,5)
+        btnsizer = wx.StdDialogButtonSizer()
+        btn = wx.Button(self, wx.ID_OK)
+        btn.SetDefault()
+        btnsizer.AddButton(btn)
+
+        btn = wx.Button(self, wx.ID_CANCEL)
+        btnsizer.AddButton(btn)
+        btnsizer.Realize()
+        box.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        self.SetSizer(box)
+        box.Fit(self)
 
 class taskbar_icon(TaskBarIcon):
     def __init__(self,frame):
@@ -22,6 +52,7 @@ class taskbar_icon(TaskBarIcon):
             self.randid = wx.NewIdRef()
             self.dashid = wx.NewIdRef()
             self.recid = wx.NewIdRef()
+            self.warningid = wx.NewIdRef()
             self.confid = wx.NewIdRef()
             self.exid = wx.NewIdRef()
 
@@ -29,20 +60,30 @@ class taskbar_icon(TaskBarIcon):
             self.Bind(wx.EVT_MENU, self.opendash, id=self.dashid)
             self.Bind(wx.EVT_MENU, self.configscreen, id=self.confid)
             self.Bind(wx.EVT_MENU, self.startrec, id=self.recid)
+            self.Bind(wx.EVT_MENU, self.panel, id = self.warningid)
             self.Bind(wx.EVT_MENU, self.ex, id=self.exid)
             print('Bind success')
         menu = wx.Menu()
         rand = wx.MenuItem(menu, id=self.randid, text='随机选择学生')
         dash = wx.MenuItem(menu, id=self.dashid, text='启动Dash')
         rec = wx.MenuItem(menu,id=self.recid,text='启动探测')
+        warning = wx.MenuItem(menu, id=self.warningid, text='警报面板')
         cfg = wx.MenuItem(menu, id=self.confid, text='设置')
         ex = wx.MenuItem(menu, id=self.exid, text='退出')
         menu.Append(rand)
         menu.Append(dash)
         menu.Append(rec)
+        menu.Append(warning)
         menu.Append(cfg)
         menu.Append(ex)
         return menu
+
+    def panel(self,evt):
+        dlg = info_screen(self, -1, "预警面板", size=(350, 200),
+                         style=wx.DEFAULT_DIALOG_STYLE)
+        dlg.CenterOnScreen()
+        val = dlg.ShowModal()
+        dlg.Destroy()
 
     def configscreen(self, evt):
         scr = config_dialog(
@@ -58,7 +99,8 @@ class taskbar_icon(TaskBarIcon):
         scr.Destroy()
 
     def startrec(self,evt):
-        call('cmd & activate ML & python recognition.py',shell=True)
+        with open('recognition.py',encoding='utf-8') as f:
+            exec(f.read())
 
     def randselect(self, evt):
         width, height = wx.DisplaySize()
@@ -212,11 +254,13 @@ class MyFrame(wx.Frame):
             self.dashid = wx.NewIdRef()
             self.recid = wx.NewIdRef()
             self.confid = wx.NewIdRef()
+            self.warnid = wx.NewIdRef()
             self.exid = wx.NewIdRef()
 
             self.Bind(wx.EVT_MENU, self.randselect, id=self.randid)
             self.Bind(wx.EVT_MENU, self.opendash, id=self.dashid)
             self.Bind(wx.EVT_MENU, self.configscreen, id=self.confid)
+            self.Bind(wx.EVT_MENU, self.panel, id=self.warnid)
             self.Bind(wx.EVT_MENU, self.startrec, id=self.recid)
             self.Bind(wx.EVT_MENU, self.ex, id=self.exid)
             print('Bind success')
@@ -224,15 +268,24 @@ class MyFrame(wx.Frame):
         rand = wx.MenuItem(menu, id=self.randid, text='随机选择学生')
         dash = wx.MenuItem(menu, id=self.dashid, text='启动Dash')
         rec = wx.MenuItem(menu,id=self.recid,text='启动探测')
+        warning = wx.MenuItem(menu, id=self.warnid, text='警报面板')
         cfg = wx.MenuItem(menu, id=self.confid, text='设置')
         ex = wx.MenuItem(menu, id=self.exid, text='退出')
         menu.Append(rand)
         menu.Append(dash)
         menu.Append(rec)
+        menu.Append(warning)
         menu.Append(cfg)
         menu.Append(ex)
         self.PopupMenu(menu)
         menu.Destroy()
+
+    def panel(self,evt):
+        dlg = info_screen(self, -1, "预警面板", size=(350, 200),
+                         style=wx.DEFAULT_DIALOG_STYLE)
+        dlg.CenterOnScreen()
+        val = dlg.ShowModal()
+        dlg.Destroy()
 
     def configscreen(self, evt):
         scr = config_dialog(
@@ -248,7 +301,7 @@ class MyFrame(wx.Frame):
         scr.Destroy()
 
     def startrec(self,evt):
-        call('cmd & activate ML & python recognition.py',shell=True)
+        import recognition
 
     def randselect(self, evt):
         width, height = wx.DisplaySize()
@@ -257,7 +310,7 @@ class MyFrame(wx.Frame):
         win.Popup()
 
     def opendash(self, event):
-        webbrowser(r'http://127.0.0.1:8050/')
+        webbrowser.open(r'http://127.0.0.1:8050/')
 
     def ex(self, event):
         wx.Exit()
@@ -269,8 +322,11 @@ class MyFrame(wx.Frame):
 
 class MyApp(wx.App):
     def OnInit(self):
+        if opstatus:
+            open_folder_scheduled()
         self.frame = MyFrame()
         self.frame.Show(True)
+        
         return True
 
 
