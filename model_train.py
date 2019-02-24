@@ -15,29 +15,28 @@ import numpy as np
 import os
 from playsound import playsound
 
-def construct_model(people):
+def construct_model(people,nb_filters1=32,nb_filters2=64,nb_pool=2,nb_conv=3):
     '''
     模型创建用函数，模型的构建参考Alexnet的结构,模型的构成如下：
     
     '''
     model = Sequential()
-    model.add(Convolution2D(64,(3,3),strides=1,padding='same',activation='tanh',input_shape=(56,56,3),data_format='channels_last'))
-    model.add(MaxPooling2D(pool_size=3,strides=1,padding='same'))
-    model.add(Convolution2D(64, 3, strides=1, padding='same', data_format='channels_last'))
+    model.add(Convolution2D(nb_filters1, (nb_conv, nb_conv),border_mode='valid',input_shape=(56,56,3),data_format='channels_last'))
     model.add(Activation('tanh'))
-    model.add(MaxPooling2D(pool_size=3,strides=1,padding='same'))
-    model.add(Convolution2D(32, 3, strides=1, padding='same', activation='tanh',data_format='channels_last'))
-    model.add(MaxPooling2D(pool_size=3,strides=1,padding='same'))
-    model.add(Dropout(0.1))
+    model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
+
+    model.add(Convolution2D(nb_filters2, (nb_conv, nb_conv)))
+    model.add(Activation('tanh'))
+    model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
+    model.add(Dropout(0.25))
+
     model.add(Flatten())
-    model.add(Dense(512))
-    model.add(Dropout(0.2))
+    model.add(Dense(1000)) #Full connection
     model.add(Activation('tanh'))
+    model.add(Dropout(0.5))
     model.add(Dense(people))
-    model.add(Dropout(0.01))
     model.add(Activation('softmax'))
-    opt = keras.optimizers.adam(lr=0.0001)
-    model.compile(optimizer=opt,loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
     print('Model construction complete.')
     playsound('alert/nncomplete.mp3')
     return model
@@ -61,21 +60,9 @@ def load():
 if __name__ == '__main__':
     x_train,y_train,classes,dct = load()
     # 使用ImageDataGenerator生成噪声数据，提高模型的泛用性
-    datagen = ImageDataGenerator(
-        featurewise_center=False,
-        samplewise_center=False,
-        featurewise_std_normalization=False,
-        samplewise_std_normalization=False,
-        zca_whitening=False,
-        rotation_range=180,
-        width_shift_range=1, 
-        height_shift_range=1,
-        horizontal_flip=True,
-        vertical_flip=True)
-    datagen.fit(x_train)
     tb = TensorBoard(log_dir='./logs',write_graph=True,write_images=True)
     model = construct_model(classes)
-    model.fit_generator(generator=datagen.flow(x_train,y_train,batch_size=1),steps_per_epoch=1,epochs=20,callbacks=[tb])
+    model.fit(x_train,y_train,epochs=2000,callbacks=[tb])
     playsound('alert/tc.mp3')
     # 保存模型
     model.save('face-model.h5')
