@@ -58,6 +58,7 @@ while True:
         cv2.imshow('Press "Q" to exit', img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
+
 print(presence_df)
 
 

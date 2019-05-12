@@ -8,6 +8,7 @@ from subprocess import call
 import webbrowser
 from openfolder import open_folder_scheduled
 from utils.warning_module import warning
+from utils.warning_email import send_mail
 
 cartoon_size = (cartoon_width, cartoon_high) = (256, 256)
 opstatus, tolerence = load_config()
@@ -89,7 +90,7 @@ class taskbar_icon(TaskBarIcon):
         scr = config_dialog(
             self,
             -1,
-            "Sample Dialog",
+            "Config Screen",
             size=(350, 200),
             style=wx.DEFAULT_DIALOG_STYLE,
         )
@@ -324,9 +325,9 @@ class MyApp(wx.App):
     def OnInit(self):
         if opstatus:
             open_folder_scheduled()
+        send_mail()
         self.frame = MyFrame()
         self.frame.Show(True)
-        
         return True
 
 

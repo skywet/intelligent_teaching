@@ -8,14 +8,14 @@ from grade_calculation import calc
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 markdown_text = '''
-# Intelligent teaching aid
-## Teacher Dashboard
-### Presence Dashboard
+# 智能教学助理
+## 教师面板
+### 出勤率面板
 ---
 '''
 markdown_text2 = '''
 ---
-## Grade Dashboard
+## 成绩面板
 '''
 df = pd.read_excel('presence/id.xlsx')
 available_indicators = df.ID
@@ -27,7 +27,7 @@ app.layout = html.Div(
     [
         dcc.Markdown(children = markdown_text),
         html.Div([
-            html.Label('Select the function'),
+            html.Label('选择功能'),
             dcc.RadioItems(
                 id = 'function',
                 options = [{'label':i,'value':i} for i in ['whole-class','individual']],
@@ -37,7 +37,7 @@ app.layout = html.Div(
         ],
         style={'width': '48%', 'display': 'inline-block'}),
         html.Div([
-            html.Label('Select the ID you want to see below'),
+            html.Label('选择您想查看的ID'),
             dcc.Dropdown(
                 id = 'student_id',
                 options = [{'label':i,'value':i} for i in available_indicators],
@@ -47,7 +47,7 @@ app.layout = html.Div(
         dcc.Graph(id='indicator-graphic'),
         dcc.Markdown(children = markdown_text2),
         html.Div([
-            html.Label('Select the function'),
+            html.Label('选择功能'),
             dcc.Dropdown(
                 id = 'func',
                 options = [{'label':i,'value':i} for i in av_indi],
@@ -81,8 +81,8 @@ def update_figure(student_id,function):
                     x = x_data,
                     y = y_data)],
                 'layout':go.Layout(
-                    xaxis = {'title':'Date'},
-                    yaxis = {'title':'Presence Frequency'},
+                    xaxis = {'title':'日期'},
+                    yaxis = {'title':'到课次数'},
                     margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
                     hovermode = 'closest'
                 )
@@ -114,7 +114,7 @@ def update_grade(func):
                     y = grade)],
                 'layout':go.Layout(
                     xaxis = {'title':'ID'},
-                    yaxis = {'title':'Grade'},
+                    yaxis = {'title':'成绩'},
                     margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
                     hovermode = 'closest'
                 )

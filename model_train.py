@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # 使用ImageDataGenerator生成噪声数据，提高模型的泛用性
     tb = TensorBoard(log_dir='./logs',write_graph=True,write_images=True)
     model = construct_model(classes)
-    model.fit(x_train,y_train,epochs=2000,callbacks=[tb])
+    model.fit(x_train,y_train,epochs=200,callbacks=[tb])
     playsound('alert/tc.mp3')
     # 保存模型
     model.save('face-model.h5')
